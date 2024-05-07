@@ -53,7 +53,7 @@ If you're calling this API from Python, you might want to use the `langgraph-sdk
 
 ## API Reference
 
-The API reference is available at `http://localhost:8123/docs`.
+The API reference is available at `http://localhost:8123/docs` when running locally. You can preview it here: [API Reference](https://langchain-ai.github.io/langgraph-example/).
 
 ## Using the API
 
