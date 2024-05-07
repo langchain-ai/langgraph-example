@@ -2,9 +2,9 @@
 
 This is an example of how to use the `langgraph-api` to stand up a REST API for your custom LangGraph StateGraph. This API can be used to interact with your StateGraph from any programming language that can make HTTP requests. It has the following features:
 
-- saved assistants
-- saved threads, with state/conversation history
-- human in the loop endpoints (interrupt, get thread state, update thread state, get history of past thread states)
+- saved assistants, tracking config for your graphs
+- saved threads, tracking state/conversation history
+- human in the loop endpoints (interrupt a run, authorize nodes, get thread state, update thread state, get history of past thread states)
 - streaming runs (with multiple stream formats, including token-by-token messages, state values and node updates)
 - background runs (with api for checking status and events, and support for completion webhooks)
 
