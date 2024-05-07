@@ -37,7 +37,7 @@ Then, create a `langgraph.json` file with your configuration. You can declare lo
 }
 ```
 
-In the `graphs` mapping, the key is the `graph_id` and the value is the path to the StateGraph. The `graph_id` is used in the API to refer to the StateGraph.
+In the `graphs` mapping, the key is the `graph_id` and the value is the path to the StateGraph. The `graph_id` is used in the API when creating an assistant.
 
 The `env` field can be a path to an env file or a dictionary of environment variables. These environment variables will be available to your LangGraph code.
 
