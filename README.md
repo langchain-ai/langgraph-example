@@ -28,10 +28,10 @@ Then, create a `langgraph.json` file with your configuration. You can declare lo
     "langchain_openai",
     "wikipedia",
     "scikit-learn",
-    "./graphs"
+    "./my_graphs"
   ],
   "graphs": {
-    "agent": "./graphs/agent.py:graph"
+    "agent": "./my_graphs/agent.py:graph"
   },
   "env": ".env"
 }
@@ -54,3 +54,33 @@ If you're calling this API from Python, you might want to use the `langgraph-sdk
 ## API Reference
 
 The API reference is available at `http://localhost:8123/docs`.
+
+## Using the API
+
+The API is designed to be easy to use from any programming language. Here's an example of how to use it from Python:
+
+```python
+from langgraph_sdk import get_client
+
+client = get_client()
+
+# List all assistants
+assistants = await client.assistants.search()
+# We auto-create an assistant for each graph you register in config.
+
+agent = assistants[0]
+
+# Start a new thread
+thread = await client.threads.create()
+
+# Start a streaming run
+input = {"messages": [{"role": "human", "content": "whats the weather in la"}]}
+async for chunk in client.runs.stream(thread['thread_id'], assistant['assistant_id'], input=input):
+    print(chunk)
+
+# Start a background run
+input = {"messages": [{"role": "human", "content": "and in sf"}]}
+run = await client.runs.create(thread['thread_id'], assistant["assistant_id"], input=input)
+```
+
+See more in `notebooks/agent.ipynb`
