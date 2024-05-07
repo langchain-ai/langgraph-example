@@ -1,6 +1,6 @@
 # `langgraph-api` Example
 
-This is an example of how to use the `langgraph-api` to stand up a REST API for your custom LangGraph StateGraph. This API can be used to interact with your StateGraph from any programming language that can make HTTP requests. It has the following features:
+This is an example of how to use `langgraph-api` to stand up a REST API for your custom LangGraph StateGraph. This API can be used to interact with your StateGraph from any programming language that can make HTTP requests. It has the following features:
 
 - saved assistants, tracking config for your graphs
 - saved threads, tracking state/conversation history
