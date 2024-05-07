@@ -31,8 +31,7 @@ Then, create a `langgraph.json` file with your configuration. You can declare lo
     "./graphs"
   ],
   "graphs": {
-    "agent": "./graphs/agent.py:graph",
-    "storm": "./graphs/storm.py:graph"
+    "agent": "./graphs/agent.py:graph"
   },
   "env": ".env"
 }
