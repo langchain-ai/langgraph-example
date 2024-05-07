@@ -1,0 +1,14 @@
+{
+  "dependencies": [
+    "langchain_community",
+    "langchain_anthropic",
+    "langchain_openai",
+    "wikipedia",
+    "scikit-learn",
+    "./my_graphs"
+  ],
+  "graphs": {
+    "agent": "./my_graphs/agent.py:graph"
+  },
+  "env": ".env"
+}
