@@ -83,7 +83,7 @@ thread = await client.threads.create()
 
 # Start a streaming run
 input = {"messages": [{"role": "human", "content": "whats the weather in la"}]}
-async for chunk in client.runs.stream(thread['thread_id'], assistant['assistant_id'], input=input):
+async for chunk in client.runs.stream(thread['thread_id'], agent['assistant_id'], input=input):
     print(chunk)
 
 # Start a background run
