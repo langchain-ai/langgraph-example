@@ -1,4 +1,4 @@
-# `langgraph-api` Example
+# `langgraph-api`
 
 This is an example of how to use `langgraph-api` to stand up a REST API for your custom LangGraph StateGraph. This API can be used to interact with your StateGraph from any programming language that can make HTTP requests.
 
@@ -19,6 +19,16 @@ It has the following features:
 We've designed it as a robust server you can run in production at high scale, and also easily test locally.
 
 ## Getting started
+
+This project uses `poetry` for dependency management and packaging in Python.
+
+1. Make sure python3 and pip3 are install and available in your PATH. 
+2. Install pipx `python3 -m pip install --user pipx`
+3. Install [poetry](https://python-poetry.org/docs/#system-requirements) `pipx install poetry`
+4. Run `poetry install` to install all the dependencies
+
+`poetry` creates virtual environment in {cache-dir/virtualenvs}. Refer this [doc](https://python-poetry.org/docs/configuration/#cache-dir)
+
 
 First, install the `langgraph-cli` package:
 
