@@ -20,6 +20,8 @@ We've designed it as a robust server you can run in production at high scale, an
 
 ## Getting started
 
+Make sure you have `docker` installed.
+
 First, install the `langgraph-cli` package:
 
 ```bash
