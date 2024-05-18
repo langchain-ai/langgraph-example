@@ -18,38 +18,30 @@ It has the following features:
 
 We've designed it as a robust server you can run in production at high scale, and also easily test locally.
 
-## Getting started
+## Quickstart
 
-Make sure you have `docker` installed.
+This will cover how to get started with the example LangGraph application in this repo.
+If you already have a LangGraph application and you want to deploy that (rather than this example LangGraph application) see the next section.
 
-First, install the `langgraph-cli` package:
+The LangGraph agent we are deploying is a simple Anthropic agent with a single search tool.
+You can see the full graph in `agent.py`
+
+First, make sure you have `docker` installed.
+
+Then, install the `langgraph-cli` package:
 
 ```bash
 pip install langgraph-cli
 ```
 
-Then, create a `langgraph.json` file with your configuration. You can declare local and external python dependencies (which will be installed with `pip`), env vars (or an env file) and the path to your StateGraph. You can expose multiple StateGraphs in the same API server by providing multiple paths. Here's an example:
+Then, create a `.env` file with the correct environment variables.
 
-```json
-{
-  "dependencies": [
-    "langchain_community",
-    "langchain_anthropic",
-    "langchain_openai",
-    "wikipedia",
-    "scikit-learn",
-    "./my_graphs"
-  ],
-  "graphs": {
-    "agent": "./my_graphs/agent.py:graph"
-  },
-  "env": ".env"
-}
+```shell
+cp .env.example .env
 ```
 
-In the `graphs` mapping, the key is the `graph_id` and the value is the path to the StateGraph. The `graph_id` is used in the API when creating an assistant.
-
-The `env` field can be a path to an env file or a dictionary of environment variables. These environment variables will be available to your LangGraph code.
+Then, go into `.env` file and add your credentials. 
+You will need an [Anthropic](https://console.anthropic.com/login?returnTo=%2F%3F), [Tavily](https://docs.tavily.com/), and [LangSmith](https://smith.langchain.com/) API keys.
 
 Then, run the following command to start the API server:
 
@@ -57,17 +49,15 @@ Then, run the following command to start the API server:
 langgraph up
 ```
 
-This will start the API server on `http://localhost:8123`. You can now interact with your StateGraph using the API or SDK.
+This will start the API server on `http://localhost:8123`. 
+You can now interact with your StateGraph using the API or SDK.
+For this example we will use the SDK, so let's go into a separate environment and install the SDK.
 
-If you're calling this API from Python, you might want to use the `langgraph-sdk` package, which provides a Python client for this API.
+```shell
+pip install langgraph-sdk
+```
 
-## API Reference
-
-The API reference is available at `http://localhost:8123/docs` when running locally. You can preview it here: [API Reference](https://langchain-ai.github.io/langgraph-example/).
-
-## Using the API
-
-The API is designed to be easy to use from any programming language. Here's an example of how to use it from Python:
+We can now interact with our deployed graph!
 
 ```python
 from langgraph_sdk import get_client
@@ -76,8 +66,8 @@ client = get_client()
 
 # List all assistants
 assistants = await client.assistants.search()
-# We auto-create an assistant for each graph you register in config.
 
+# We auto-create an assistant for each graph you register in config.
 agent = assistants[0]
 
 # Start a new thread
@@ -87,10 +77,92 @@ thread = await client.threads.create()
 input = {"messages": [{"role": "human", "content": "whats the weather in la"}]}
 async for chunk in client.runs.stream(thread['thread_id'], agent['assistant_id'], input=input):
     print(chunk)
-
-# Start a background run
-input = {"messages": [{"role": "human", "content": "and in sf"}]}
-run = await client.runs.create(thread['thread_id'], assistant["assistant_id"], input=input)
 ```
 
-See more in `notebooks/agent.ipynb`
+There we go! Up and running.
+There's still a lot left to learn.
+
+For more examples of how to interact with the API once it is deployed using the SDK, see the example notebooks in [notebooks](./notebooks)
+
+For an explanation of how the deployment works and how to deploy a custom graph, see the section below.
+
+## Deploy a custom agent
+
+The quickstart walked through deploying a simple agent. But what if you want to deploy it for your custom agent?
+
+### Build your agent
+First: build your agent with LangGraph. See LangGraph documentation [here](https://github.com/langchain-ai/langgraph) for references and examples.
+
+### Define `langgraph.json`
+Now we will define our `langgraph.json` file. This configuration has three parts:
+
+#### `graphs`
+
+In the graphs mapping, the key is the graph_id and the value is the path to the agent (a StateGraph). 
+The graph_id is used in the API when creating an assistant.
+You can declare multiple graphs.
+
+In the example, we had:
+```json
+  "graphs": {
+    "agent": "./agent.py:graph"
+  },
+```
+This meant that we were defining an agent with graph_id `agent` and the path was in the `agent.py` file with a variable called `graph`.
+
+#### `dependencies`
+
+You can declare local and external python dependencies (which will be installed with pip) here.
+
+In the example, we had:
+
+```json
+  "dependencies": ["."],
+```
+
+This meant we installed this current directory as a dependency.
+That includes anything in `requirements.txt` and any helper files here.
+
+You can also specify third party packages here.
+For example, you could do something like:
+
+```json
+  "dependencies": [".", "wikipedia"],
+```
+
+This would install the current directory (and any requirements files located inside) as well as the `wikipedia` package.
+
+#### `env`
+
+This is a path to any environment variables/files to load.
+
+In our example we had:
+
+```json
+  "env": ".env"
+```
+
+This meant we loaded the environment variables in the `.env` file
+
+### Launch the LangGraph agent
+
+We can now use our CLI to launch the LangGraph agent.
+
+First, we need to install it. We can do this with:
+
+```
+pip install langgraph-cli
+```
+
+Once installed, we can then launch the service with:
+
+```shell
+langgraph up
+```
+
+There are a few extra commands for additional control. For a full list, run `langgraph up --help`
+
+## API Reference
+
+The API reference is available at `http://localhost:8123/docs` when running locally. You can preview it here: [API Reference](https://langchain-ai.github.io/langgraph-example/).
+
