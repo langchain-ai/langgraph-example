@@ -45,3 +45,11 @@ This is useful when you want to:
 In this guide we will show how to do that for the default agent we have built in.
 
 - [How to configure agents](./configuration.ipynb)
+
+## Multiple Agents, Same Thread
+
+In LangGraph API, a thread is not explicitly associated with a particular agent.
+This means that you can run multiple agents on the same thread.
+In this example, we will create two agents and then call them both on the same thread.
+
+- [How to run multiple agents on the same thread](./same-thread.ipynb)
