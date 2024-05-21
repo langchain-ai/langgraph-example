@@ -32,3 +32,16 @@ When you deploy a graph with LangGraph API, it is deployed with a persistence la
 This enables easy human-in-the-loop interactions like approving a tool call, editing a tool call, and returning to and modifying a previous state and resuming execution from there.
 
 - [How to have a human in the loop](./human-in-the-loop.ipynb)
+
+## Configuration
+
+One of the benefits of LangGraph API is that it lets you create agents with different configurations.
+This is useful when you want to:
+
+1. Define a cognitive architecture once as a LangGraph
+2. Let that LangGraph be configurable across some attributes (for example, system message or LLM to use)
+3. Let users create agents with arbitrary configurations, save them, and then use them in the future
+
+In this guide we will show how to do that for the default agent we have built in.
+
+- [How to configure agents](./configuration.ipynb)
