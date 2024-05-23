@@ -53,6 +53,8 @@ This will start the API server on `http://localhost:8123`.
 You can now interact with your StateGraph using the API or SDK.
 For this example we will use the SDK, so let's go into a separate environment and install the SDK.
 
+### Python
+
 ```shell
 pip install langgraph-sdk
 ```
@@ -77,6 +79,48 @@ thread = await client.threads.create()
 input = {"messages": [{"role": "human", "content": "whats the weather in la"}]}
 async for chunk in client.runs.stream(thread['thread_id'], agent['assistant_id'], input=input):
     print(chunk)
+```
+
+### JS/TS
+
+```bash
+yarn add @langchain/langgraph-sdk
+```
+
+```js
+import { Client } from "@langchain/langgraph-sdk";
+
+const client = new Client();
+
+// List all assistants
+const assistants = await client.assistants.search({
+  metadata: null,
+  offset: 0,
+  limit: 10,
+});
+
+// We auto-create an assistant for each graph you register in config.
+const agent = assistants[0];
+
+// Start a new thread
+const thread = await client.threads.create({ metadata: null });
+
+// Start a streaming run
+const messages = [{"role": "human", "content": "whats the weather in la"}]
+
+const streamResponse = await client.runs.stream(
+  thread["thread_id"],
+  agent["assistant_id"],
+  {
+    input: {
+      messages
+    }
+  }
+);
+
+for await (const chunk of streamResponse) {
+  console.log(chunk);
+}
 ```
 
 There we go! Up and running.
