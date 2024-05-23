@@ -51,7 +51,7 @@ async function main() {
     console.log("Final result", finalResult);
 
     // We can get the content of the final message
-    const finalMessages = finalResult.data["output"]["messages"];
+    const finalMessages = (finalResult.data as Record<string, any>)["output"]["messages"];
     const finalMessageContent = finalMessages[finalMessages.length - 1].content;
     console.log("Final message content", finalMessageContent);
 }

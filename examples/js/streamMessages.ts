@@ -51,9 +51,10 @@ async function streamMessages() {
 
   for await (const event of client.runs.stream(thread.thread_id, assistant.assistant_id, { input, streamMode: "messages" })) {
     if (event.event === "metadata") {
-      console.log(`Metadata: Run ID - ${event.data["run_id"]}`);
+      const data = event.data as Record<string, any>
+      console.log(`Metadata: Run ID - ${data["run_id"]}`);
     } else if (event.event === "messages/partial") {
-      for (const dataItem of event.data) {
+      for (const dataItem of event.data as Record<string, any>[]) {
         if ("role" in dataItem && dataItem.role === "user") {
           console.log(`Human: ${dataItem.content}`);
         } else {
