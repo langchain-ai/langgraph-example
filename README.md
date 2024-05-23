@@ -1,5 +1,7 @@
 # `langgraph-api` Example
 
+![](static/agent_ui.png)
+
 This is an example of how to use `langgraph-api` to stand up a REST API for your custom LangGraph StateGraph. This API can be used to interact with your StateGraph from any programming language that can make HTTP requests.
 
 [LangGraph](https://github.com/langchain-ai/langgraph) is a library for building stateful, multi-actor applications with LLMs. The main use cases for LangGraph are conversational agents, and long-running, multi-step LLM applications or any LLM application that would benefit from built-in support for persistent checkpoints, cycles and human-in-the-loop interactions (ie. LLM and human collaboration).
@@ -210,3 +212,14 @@ There are a few extra commands for additional control. For a full list, run `lan
 
 The API reference is available at `http://localhost:8123/docs` when running locally. You can preview it here: [API Reference](https://langchain-ai.github.io/langgraph-example/).
 
+## UI
+
+Part of LangGraph API includes a UI for interacting with created agents.
+After running `langgraph up` you can access this UI by going to [http://localhost:8124/assistants](http://localhost:8124/assistants). You will fist see a list of all agents.
+
+![](static/assistants.png)
+
+Once there, you can select an agent of your choosing.
+After clicking on it, you will be taken to an interactive playground whereby you can visualize and then interact with the agent.
+
+![](static/agent_ui.png)
