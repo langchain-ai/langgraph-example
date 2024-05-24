@@ -42,7 +42,7 @@ Then, create a `.env` file with the correct environment variables.
 cp .env.example .env
 ```
 
-Then, go into `.env` file and add your credentials. 
+Then, go into `.env` file and add your credentials.
 You will need an [Anthropic](https://console.anthropic.com/login?returnTo=%2F%3F), [Tavily](https://docs.tavily.com/), and [LangSmith](https://smith.langchain.com/) API keys.
 
 Then, run the following command to start the API server:
@@ -51,7 +51,7 @@ Then, run the following command to start the API server:
 langgraph up
 ```
 
-This will start the API server on `http://localhost:8123`. 
+This will start the API server on `http://localhost:8123`.
 You can now interact with your StateGraph using the API or SDK.
 For this example we will use the SDK, so let's go into a separate environment and install the SDK.
 
@@ -108,15 +108,13 @@ const agent = assistants[0];
 const thread = await client.threads.create();
 
 // Start a streaming run
-const messages = [{"role": "human", "content": "whats the weather in la"}]
+const messages = [{ role: "human", content: "whats the weather in la" }];
 
-const streamResponse = await client.runs.stream(
+const streamResponse = client.runs.stream(
   thread["thread_id"],
   agent["assistant_id"],
   {
-    input: {
-      messages
-    }
+    input: { messages },
   }
 );
 
@@ -137,23 +135,27 @@ For an explanation of how the deployment works and how to deploy a custom graph,
 The quickstart walked through deploying a simple agent. But what if you want to deploy it for your custom agent?
 
 ### Build your agent
+
 First: build your agent with LangGraph. See LangGraph documentation [here](https://github.com/langchain-ai/langgraph) for references and examples.
 
 ### Define `langgraph.json`
+
 Now we will define our `langgraph.json` file. This configuration has three parts:
 
 #### `graphs`
 
-In the graphs mapping, the key is the graph_id and the value is the path to the agent (a StateGraph). 
+In the graphs mapping, the key is the graph_id and the value is the path to the agent (a StateGraph).
 The graph_id is used in the API when creating an assistant.
 You can declare multiple graphs.
 
 In the example, we had:
+
 ```json
   "graphs": {
     "agent": "./agent.py:graph"
   },
 ```
+
 This meant that we were defining an agent with graph_id `agent` and the path was in the `agent.py` file with a variable called `graph`.
 
 #### `dependencies`
