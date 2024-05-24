@@ -79,10 +79,7 @@ async function main() {
     id: lastMessage.tool_calls[0].id,
   }];
 
-  await client.threads.updateState(
-    thread.thread_id,
-    { values: { messages: [lastMessage] } }
-  );
+  await client.threads.updateState(thread.thread_id, { messages: [lastMessage] });
 
   // Check the updated state
   threadState = await client.threads.getState(thread.thread_id);
