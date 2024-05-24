@@ -1,4 +1,5 @@
-// Import the necessary modules from the SDK
+// How to kick off background runs
+// This guide covers how to kick off background runs for your agent. This can be useful for long running jobs.
 import { Client } from "@langchain/langgraph-sdk";
 
 async function main() {
