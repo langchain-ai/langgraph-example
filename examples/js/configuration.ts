@@ -30,17 +30,24 @@ In this example we will see an example of how to create an example agent that is
 
 async function main() {
   const client = new Client();
-  const assistant = await client.assistants.create({ graphId: "agent", config: { configurable: { model_name: "openai" } }});
+  const assistant = await client.assistants.create({
+    graphId: "agent",
+    config: { configurable: { model_name: "openai" } },
+  });
   // We can see that this assistant has saved the config
   console.log("Assistant", assistant);
-  const thread = await client.threads.create({ metadata: null });
+  const thread = await client.threads.create();
   const input = { messages: [{ role: "user", content: "who made you?" }] };
 
-  for await (const event of client.runs.stream(thread.thread_id, assistant.assistant_id, { input })) {
+  for await (const event of client.runs.stream(
+    thread.thread_id,
+    assistant.assistant_id,
+    { input }
+  )) {
     console.log(`Receiving new event of type: ${event.event}...`);
     console.log(JSON.stringify(event.data));
     console.log("\n\n");
   }
 }
 
-main()
+main();

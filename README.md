@@ -105,7 +105,7 @@ const assistants = await client.assistants.search({
 const agent = assistants[0];
 
 // Start a new thread
-const thread = await client.threads.create({ metadata: null });
+const thread = await client.threads.create();
 
 // Start a streaming run
 const messages = [{"role": "human", "content": "whats the weather in la"}]

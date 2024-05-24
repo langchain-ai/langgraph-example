@@ -29,10 +29,13 @@ It outputs messages returned from nodes (to allow for nodes to return ToolMessag
 
 async function streamMessages() {
   const client = new Client();
-  const assistant = await client.assistants.create({ graphId: "agent", config: { configurable: { model_name: "openai" } }});
+  const assistant = await client.assistants.create({
+    graphId: "agent",
+    config: { configurable: { model_name: "openai" } },
+  });
   console.log("Assistant", assistant);
 
-  const thread = await client.threads.create({ metadata: null });
+  const thread = await client.threads.create();
   console.log("Thread", thread);
 
   const runs = await client.runs.list(thread.thread_id);
@@ -41,17 +44,28 @@ async function streamMessages() {
   // Helper function for formatting messages
   function formatToolCalls(toolCalls) {
     if (toolCalls && toolCalls.length > 0) {
-      const formattedCalls = toolCalls.map(call => `Tool Call ID: ${call.id}, Function: ${call.name}, Arguments: ${JSON.stringify(call.args)}`);
+      const formattedCalls = toolCalls.map(
+        (call) =>
+          `Tool Call ID: ${call.id}, Function: ${
+            call.name
+          }, Arguments: ${JSON.stringify(call.args)}`
+      );
       return formattedCalls.join("\n");
     }
     return "No tool calls";
   }
 
-  const input = { messages: [{ role: "user", content: "whats the weather in sf" }] };
+  const input = {
+    messages: [{ role: "user", content: "whats the weather in sf" }],
+  };
 
-  for await (const event of client.runs.stream(thread.thread_id, assistant.assistant_id, { input, streamMode: "messages" })) {
+  for await (const event of client.runs.stream(
+    thread.thread_id,
+    assistant.assistant_id,
+    { input, streamMode: "messages" }
+  )) {
     if (event.event === "metadata") {
-      const data = event.data as Record<string, any>
+      const data = event.data as Record<string, any>;
       console.log(`Metadata: Run ID - ${data["run_id"]}`);
     } else if (event.event === "messages/partial") {
       for (const dataItem of event.data as Record<string, any>[]) {
@@ -87,5 +101,5 @@ async function streamMessages() {
     }
   }
 }
-  
-streamMessages()
+
+streamMessages();
