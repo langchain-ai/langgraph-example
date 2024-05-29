@@ -1,7 +1,11 @@
 {
-  "dependencies": ["."],
+  "dependencies": [
+    "."
+  ],
   "graphs": {
-    "agent": "./agent.py:graph"
+    "agent": "./agent.py:graph",
+    "chat_bot_agent": "./chat_bot_agent.py:part_1_graph"
   },
-  "env": ".env"
+  "env": ".env",
+  "python_version": "3.12"
 }

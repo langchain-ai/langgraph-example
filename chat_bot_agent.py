@@ -2,7 +2,6 @@ from langchain_anthropic import ChatAnthropic
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable, RunnableConfig
-import datetime
 from typing import Annotated
 import re
 from typing_extensions import TypedDict
@@ -16,7 +15,17 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import ToolMessage
 from langgraph.prebuilt import ToolNode
+from langchain_core.tools import tool
+from typing import Optional
+import requests
+import time
+import jwt
+import os
 
+# Utilities - TODO: Move to Utils folder
+app_id = '903588'
+installation_id = '51026556'
+private_key = os.environ.get("GITHUB_APP_PRIVATE_KEY_1")
 
 def handle_tool_error(state) -> dict:
     error = state.get("error")
@@ -31,12 +40,10 @@ def handle_tool_error(state) -> dict:
         ]
     }
 
-
 def create_tool_node_with_fallback(tools: list) -> dict:
     return ToolNode(tools).with_fallbacks(
         [RunnableLambda(handle_tool_error)], exception_key="error"
     )
-
 
 def _print_event(event: dict, _printed: set, max_length=1500):
     current_state = event.get("dialog_state")
@@ -60,11 +67,64 @@ def convert_tools_name(tools) -> list[BaseTool]:
 		tool.name = re.sub(r'\s+', '_', cleaned_string).strip('_')
 	return tools
 
-searchTool = [TavilySearchResults(max_results=1)]
-github = GitHubAPIWrapper()
-toolkit = GitHubToolkit.from_github_api_wrapper(github)
-githubTools = convert_tools_name(toolkit.get_tools())
+def generate_jwt(app_id, private_key):
+    payload = {
+        'iat': int(time.time()),
+        'exp': int(time.time()) + (10 * 60),  # JWT expiration time (10 minutes)
+        'iss': app_id
+    }
+    encoded_jwt = jwt.encode(payload, private_key, algorithm='RS256')
+    return encoded_jwt
 
+def get_installation_access_token(app_id, private_key, installation_id):
+    jwt_token = generate_jwt(app_id, private_key)
+    headers = {
+        'Authorization': f'Bearer {jwt_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    url = f'https://api.github.com/app/installations/{installation_id}/access_tokens'
+    response = requests.post(url, headers=headers)
+    response_data = response.json()
+    return response_data['token']
+
+def list_repo_contents(owner, repo, path, access_token):
+    headers = {
+        'Authorization': f'token {access_token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    url = f'https://api.github.com/repos/{owner}/{repo}/contents/{path}'
+    response = requests.get(url, headers=headers)
+    return response.json()
+
+def list_all_files(owner, repo, path='', access_token=None, files=[]):
+    contents = list_repo_contents(owner, repo, path, access_token)
+    for item in contents:
+        if item['type'] == 'file':
+            files.append(item['path'])
+        elif item['type'] == 'dir':
+            list_all_files(owner, repo, item['path'], access_token, files)
+
+access_token = get_installation_access_token(app_id, private_key, installation_id)
+
+@tool
+def github_fetch_files_from_repo(repo: Optional[str] = None) -> list[str]:
+	"""
+	List all the files in a given repo
+
+	Args:
+      repo (Optional[str]): repository name
+	Returns:
+      List[str]: List of files from the repository
+	"""
+	owner = 'ekline-io'
+	repo = 'documentation'
+	path = ''  # Root directory or specify a subdirectory
+	files = []
+	list_all_files(owner, repo, path, access_token, files)
+	return files
+
+
+searchTool = TavilySearchResults(max_results=1)
 class State(TypedDict):
 	messages: Annotated[list[AnyMessage], add_messages]
 
@@ -102,19 +162,18 @@ llm = ChatAnthropic(model="claude-3-sonnet-20240229", temperature=1)
 
 primary_assistant_prompt = ChatPromptTemplate.from_messages(
     [
-        (
-					"system",
-					"You are a helpful support assistant for ekline, the company, products. "
-					" Use the provided github tools that can search for issues, comments on issues, solve issues, create PRs in a repositories to assist the user's queries. "
-					" When searching, be persistent. Expand your query bounds if the first search returns no results. "
-					" If a search comes up empty, expand your search before giving up."
-					"issues:{issues}"
-        ),
-        ("placeholder", "{messages}")
+			(
+				"system",
+				"You are a helpful support assistant for ekline, the company, products. "
+				" Use the provided github tools that can search for issues, comments on issues, solve issues, create PRs in a repositories to assist the user's queries. "
+				" When searching, be persistent. Expand your query bounds if the first search returns no results. "
+				" If a search comes up empty, expand your search before giving up."
+			),
+			("placeholder", "{messages}")
     ]
 )
 
-part_1_tools = (searchTool + githubTools)
+part_1_tools = [searchTool , github_fetch_files_from_repo]
 part_1_assistant_runnable = primary_assistant_prompt | llm.bind_tools(part_1_tools)
 
 builder = StateGraph(State)
@@ -135,28 +194,28 @@ builder.add_edge("tools", "assistant")
 # this is a complete memory for the entire graph.
 memory = SqliteSaver.from_conn_string(":memory:")
 part_1_graph = builder.compile(checkpointer=memory)
-# print(github.get_issue(3))
 
-# Let's create an example conversation a user might have with the assistant
-tutorial_questions = [
-    "How many open issues are present in the repository",
-]
 
-thread_id = str(uuid.uuid4())
+# # Let's create an example conversation a user might have with the assistant
+# tutorial_questions = [
+#     "How many open issues are present in the repository",
+# ]
 
-config = {
-	"configurable": {
-		# Checkpoints are accessed by thread_id
-		"thread_id": thread_id,
-		"issues": github.get_issues()
-	}
-}
-# print(part_1_graph.get_state(config=config))
+# thread_id = str(uuid.uuid4())
 
-_printed = set()
-for question in tutorial_questions:
-	events = part_1_graph.stream(
-		{"messages": ("user", question)}, config, stream_mode="values"
-	)
-	for event in events:
-		_print_event(event, _printed)
+# config = {
+# 	"configurable": {
+# 		# Checkpoints are accessed by thread_id
+# 		"thread_id": thread_id,
+# 		"issues": github.get_issues()
+# 	}
+# }
+# # print(part_1_graph.get_state(config=config))
+
+# _printed = set()
+# for question in tutorial_questions:
+# 	events = part_1_graph.stream(
+# 		{"messages": ("user", question)}, config, stream_mode="values"
+# 	)
+# 	for event in events:
+# 		_print_event(event, _printed)
