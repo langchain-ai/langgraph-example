@@ -180,6 +180,8 @@ For example, you could do something like:
 
 This would install the current directory (and any requirements files located inside) as well as the `wikipedia` package.
 
+
+
 #### `env`
 
 This is a path to any environment variables/files to load.
@@ -192,6 +194,16 @@ In our example we had:
 
 This meant we loaded the environment variables in the `.env` file
 
+An example for langgrah.json file:
+```json
+{
+  "graphs": {
+    "agent": "./agent.py:graph"
+  },
+  "env": ".env",
+  "dependencies": ["."] // installs dependencies from ./requirements.txt
+}
+```
 ### Launch the LangGraph agent
 
 We can now use our CLI to launch the LangGraph agent.
@@ -203,7 +215,7 @@ pip install langgraph-cli
 ```
 
 Once installed, we can then launch the service with:
-
+(make sure docker is running)
 ```shell
 langgraph up
 ```
@@ -217,7 +229,7 @@ The API reference is available at `http://localhost:8123/docs` when running loca
 ## UI
 
 Part of LangGraph API includes a UI for interacting with created agents.
-After running `langgraph up` you can access this UI by going to [http://localhost:8124/assistants](http://localhost:8124/assistants). You will fist see a list of all agents.
+After running `langgraph up` you can access this UI by going to [http://localhost:8124/assistants](http://localhost:8124/assistants). You will first see a list of all agents.
 
 ![](static/assistants.png)
 
