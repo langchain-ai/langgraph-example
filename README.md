@@ -210,6 +210,12 @@ langgraph up
 
 There are a few extra commands for additional control. For a full list, run `langgraph up --help`
 
+### Add custom services
+
+`langgraph up` spins up the LangGraph agent using Docker Compose. If you want to launch other services as part of the same project, you can use the `-d` flag to pass an additional docker compose file to be merged into the same project. 
+
+For instance, if you create a docker compose file at `compose.yml` you can then run `langgraph up -d compose.yml` to spin up both the LangGraph services as well as your custom services.
+
 ## API Reference
 
 The API reference is available at `http://localhost:8123/docs` when running locally. You can preview it here: [API Reference](https://langchain-ai.github.io/langgraph-example/).
