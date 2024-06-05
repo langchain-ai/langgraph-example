@@ -1,4 +1,4 @@
-from typing import TypedDict, Annotated, Sequence
+from typing import TypedDict, Annotated, Sequence, Literal
 
 from functools import lru_cache
 from langchain_core.messages import BaseMessage
@@ -52,9 +52,13 @@ def call_model(state, config):
 # Define the function to execute tools
 tool_node = ToolNode(tools)
 
+# Define the config
+class GraphConfig(TypedDict):
+    model_name: Literal["anthropic", "openai"]
+
 
 # Define a new graph
-workflow = StateGraph(AgentState)
+workflow = StateGraph(AgentState, config_schema=GraphConfig)
 
 # Define the two nodes we will cycle between
 workflow.add_node("agent", call_model)
