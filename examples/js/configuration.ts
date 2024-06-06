@@ -26,16 +26,33 @@ def call_model(state, config):
 We are looking inside the config for a `model_name` parameter (which defaults to `anthropic` if none is found).
 That means that by default we are using Anthropic as our model provider.
 In this example we will see an example of how to create an example agent that is configured to use OpenAI.
+
+We've also communicated to the graph that it should expect configuration with this key.
+We've done this by passing `config_schema` when constructing the graph, eg:
+
+```python
+class GraphConfig(TypedDict):
+    model_name: Literal["anthropic", "openai"]
 */
 
 async function main() {
   const client = new Client();
+  const baseAssistant = await client.assistants.create({
+    graphId: "agent",
+  });
+  console.log("Assistant", baseAssistant);
+  /* We can now call `.get_schemas` to get schemas associated with this graph*/
+  const schemas = await client.assistants.getSchemas(baseAssistant["assistant_id"])
+  /* There are multiple types of schemas
+  We can get the `config_schema` to look at the the configurable parameters */
+  // @ts-ignore
+  console.log("Schema with configurable parameters", schemas["config_schema"]["definitions"]["Configurable"]["properties"])
   const assistant = await client.assistants.create({
     graphId: "agent",
     config: { configurable: { model_name: "openai" } },
   });
   // We can see that this assistant has saved the config
-  console.log("Assistant", assistant);
+  console.log("Assistant with config", assistant);
   const thread = await client.threads.create();
   const input = { messages: [{ role: "user", content: "who made you?" }] };
 

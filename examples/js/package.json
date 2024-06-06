@@ -6,5 +6,6 @@
   "license": "MIT",
   "dependencies": {
     "@langchain/langgraph-sdk": "*"
-  }
+  },
+  "type": "module"
 }
