@@ -16,7 +16,10 @@ It has the following features:
 - saved threads, tracking state/conversation history
 - human in the loop endpoints (interrupt a run, authorize nodes, get thread state, update thread state, get history of past thread states)
 - streaming runs (with multiple stream formats, including token-by-token messages, state values and node updates)
-- background runs (with api for checking status and events, and support for completion webhooks)
+- background runs (powered by a built-in task queue with exactly-once semantics, and FIFO ordering, with api for checking status and events, and support for completion webhooks)
+- horizontally scalable, both the HTTP server and task queue are designed to run in many machines in parallel, with all state stored in Postgres
+- "double texting" modes, fully configurable support to handle new input arriving while a thread still processing previous input, choose from these modes: reject, enqueue, cancel, rollback
+- low latency, all interactions with the database have been optimized into a single roundtrip per endpoint, all database ops during runs are backgrounded and batched, and lots of other optimizations from our experience running high performance python services at scale
 
 We've designed it as a robust server you can run in production at high scale, and also easily test locally.
 
