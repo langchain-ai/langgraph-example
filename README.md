@@ -223,6 +223,11 @@ For instance, if you create a docker compose file at `compose.yml` you can then 
 
 The API reference is available at `http://localhost:8123/docs` when running locally. You can preview it here: [API Reference](https://langchain-ai.github.io/langgraph-example/).
 
+## Server configuration
+
+To configure throughput you can use the env vars N_WORKERS (default 2) and N_JOBS_PER_WORKER (default 5).
+Throughput for background runs is the product of the two, so by default at most 10 runs can be running at any one time.
+
 ## UI
 
 Part of LangGraph API includes a UI for interacting with created agents.
