@@ -1,3 +1,4 @@
+import time
 from typing import TypedDict, Annotated, Sequence, Literal
 
 from functools import lru_cache
@@ -25,6 +26,7 @@ def _get_model(model_name: str):
 
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
+    sleep: int
 
 
 # Define the function that determines whether to continue or not
@@ -41,6 +43,10 @@ def should_continue(state):
 
 # Define the function that calls the model
 def call_model(state, config):
+    # Optional sleep to demonstrate multitask_strategy "cancel"
+    if sleep := state.get("sleep"):
+        time.sleep(sleep)
+
     messages = state["messages"]
     model_name = config.get('configurable', {}).get("model_name", "anthropic")
     model = _get_model(model_name)
