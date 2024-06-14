@@ -15,16 +15,6 @@ import { Client } from "@langchain/langgraph-sdk";
 const sleep = async (ms: number) =>
   await new Promise((resolve) => setTimeout(resolve, ms));
 
-const pollRun = async (client: Client, threadId: string, runId: string) => {
-  // Wait until the original run finishes
-  let run = await client.runs.get(threadId, runId);
-  while (run["status"] != "success") {
-    await sleep(500);
-    run = await client.runs.get(threadId, runId);
-  }
-  return run;
-};
-
 async function main() {
   const client = new Client();
   const assistant = await client.assistants.create({
@@ -45,14 +35,14 @@ async function main() {
   );
 
   // attempt a new run (will be rejected)
-  await client.runs.create(thread["thread_id"], assistant["assistant_id"], {
+  run = await client.runs.create(thread["thread_id"], assistant["assistant_id"], {
     input: {
       messages: [{ role: "human", content: "whats the weather in nyc?" }],
     },
     multitaskStrategy: "reject",
   });
 
-  run = await pollRun(client, thread["thread_id"], run["run_id"]);
+  await client.runs.join(thread["thread_id"], run["run_id"]);
 
   // We can verify that the original thread finished executing:
   let state = await client.threads.getState(thread["thread_id"]);
@@ -82,7 +72,7 @@ async function main() {
       multitaskStrategy: "interrupt",
     },
   );
-  run = await pollRun(client, thread["thread_id"], run["run_id"]);
+  await client.runs.join(thread["thread_id"], run["run_id"]);
 
   // We can see that the thread has partial data from the first run + data from the second run
   state = await client.threads.getState(thread["thread_id"]);
@@ -121,7 +111,7 @@ async function main() {
     },
   );
 
-  await pollRun(client, thread["thread_id"], run["run_id"]);
+  await client.runs.join(thread["thread_id"], run["run_id"]);
 
   // We can see that the thread only has data from the second run
   state = await client.threads.getState(thread["thread_id"]);
@@ -154,7 +144,7 @@ async function main() {
       multitaskStrategy: "enqueue",
     },
   );
-  await pollRun(client, thread["thread_id"], secondRun["run_id"]);
+  await client.runs.join(thread["thread_id"], secondRun["run_id"]);
 
   // Verify that the thread has data from both runs
   state = await client.threads.getState(thread["thread_id"]);
