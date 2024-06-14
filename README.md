@@ -129,7 +129,7 @@ for await (const chunk of streamResponse) {
 There we go! Up and running.
 There's still a lot left to learn.
 
-For more examples of how to interact with the API once it is deployed using the SDK, see the example notebooks in [notebooks](./notebooks)
+For more examples of how to interact with the API once it is deployed using the SDK, see the example notebooks in [notebooks](./examples/python/notebooks)
 
 For an explanation of how the deployment works and how to deploy a custom graph, see the section below.
 
