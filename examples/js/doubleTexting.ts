@@ -4,10 +4,11 @@
 You might want to start a new run on a thread while the previous run still haven't finished. We call this "double-texting" or multi-tasking.
 
 There are several strategies for handling this:
- 
-- `reject`: Reject the new run
-- `cancel`: Cancel the existing run and start a new one.
-- `enqueue`: Wait until the existing run is finished to start the new run.
+
+- `reject`: Reject the new run.
+- `interrupt`: Interrupt the current run, keeping steps completed until now, and start a new one.
+- `rollback`: Cancel and delete the existing run, rolling back the thread to the state before it had started, then start the new run.
+- `enqueue`: Queue up the new run to start after the current run finishes.
 */
 
 import { Client } from "@langchain/langgraph-sdk";
