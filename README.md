@@ -33,19 +33,29 @@ You can see the full graph in `agent.py`
 
 First, make sure you have `docker` installed.
 
-Then, install the `langgraph-cli` package:
+Clone this repo and switch your active directory to the newly created one:
+
+```bash
+git clone https://github.com/langchain-ai/langgraph-example.git
+```
+
+```bash
+cd langgraph-example
+```
+
+Install the `langgraph-cli` package:
 
 ```bash
 pip install langgraph-cli
 ```
 
-Then, create a `.env` file with the correct environment variables.
+Create a `.env` file with the correct environment variables.
 
 ```shell
 cp .env.example .env
 ```
 
-Then, go into `.env` file and add your credentials.
+Go into `.env` file and add your credentials.
 You will need an [Anthropic](https://console.anthropic.com/login?returnTo=%2F%3F), [Tavily](https://docs.tavily.com/), and [LangSmith](https://smith.langchain.com/) API keys.
 
 Then, run the following command to start the API server:
