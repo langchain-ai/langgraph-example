@@ -128,7 +128,7 @@ const streamResponse = client.runs.stream(
   agent["assistant_id"],
   {
     input: { messages },
-  }
+  },
 );
 
 for await (const chunk of streamResponse) {
@@ -225,7 +225,7 @@ There are a few extra commands for additional control. For a full list, run `lan
 
 ### Add custom services
 
-`langgraph up` spins up the LangGraph agent using Docker Compose. If you want to launch other services as part of the same project, you can use the `-d` flag to pass an additional docker compose file to be merged into the same project. 
+`langgraph up` spins up the LangGraph agent using Docker Compose. If you want to launch other services as part of the same project, you can use the `-d` flag to pass an additional docker compose file to be merged into the same project.
 
 For instance, if you create a docker compose file at `compose.yml` you can then run `langgraph up -d compose.yml` to spin up both the LangGraph services as well as your custom services.
 
@@ -241,11 +241,6 @@ Throughput for background runs is the product of the two, so by default at most 
 ## UI
 
 Part of LangGraph API includes a UI for interacting with created agents.
-After running `langgraph up` you can access this UI by going to [http://localhost:8124/assistants](http://localhost:8124/assistants). You will fist see a list of all agents.
-
-![](static/assistants.png)
-
-Once there, you can select an agent of your choosing.
-After clicking on it, you will be taken to an interactive playground whereby you can visualize and then interact with the agent.
+After running `langgraph up` you can access this UI by going to [http://localhost:8124](http://localhost:8124). You will be taken to an interactive playground whereby you can visualize and then interact with the agent.
 
 ![](static/agent_ui.png)
