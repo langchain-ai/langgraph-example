@@ -36,7 +36,7 @@ async function main() {
   );
 
   // attempt a new run (will be rejected)
-  run = await client.runs.create(thread["thread_id"], assistant["assistant_id"], {
+  await client.runs.create(thread["thread_id"], assistant["assistant_id"], {
     input: {
       messages: [{ role: "human", content: "whats the weather in nyc?" }],
     },
@@ -58,11 +58,10 @@ async function main() {
     {
       input: {
         messages: [{ role: "human", content: "whats the weather in sf?" }],
-        sleep: 5,
       },
     },
   );
-  await sleep(500);
+  await sleep(2000);
   run = await client.runs.create(
     thread["thread_id"],
     assistant["assistant_id"],
@@ -96,11 +95,10 @@ async function main() {
     {
       input: {
         messages: [{ role: "human", content: "whats the weather in sf?" }],
-        sleep: 5,
       },
     },
   );
-  await sleep(500);
+  await sleep(2000);
   run = await client.runs.create(
     thread["thread_id"],
     assistant["assistant_id"],
