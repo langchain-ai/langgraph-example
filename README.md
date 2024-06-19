@@ -31,7 +31,7 @@ If you already have a LangGraph application and you want to deploy that (rather 
 The LangGraph agent we are deploying is a simple Anthropic agent with a single search tool.
 You can see the full graph in `agent.py`
 
-First, make sure you have `docker` installed.
+You will need to have Docker running locally in order to use LangGraph Cloud. Download it [here](https://docs.docker.com/desktop/install/mac-install/), open the app, and ensure the Docker engine is running.
 
 Clone this repo and switch your active directory to the newly created one:
 
