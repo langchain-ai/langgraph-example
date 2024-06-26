@@ -1,3 +1,19 @@
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Environment
 .env
+.envrc
+.venv*
+venv*
+env/
+ENV/
+env.bak/
+
+# Jupyter Notebook
 .ipynb_checkpoints
+
+# LangGraph
 .langgraph-data
