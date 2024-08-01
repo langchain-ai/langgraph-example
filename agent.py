@@ -39,9 +39,12 @@ def should_continue(state):
         return "continue"
 
 
+system_prompt = """Be a helpful assistant"""
+
 # Define the function that calls the model
 def call_model(state, config):
     messages = state["messages"]
+    messages = [{"role": "system", "content": system_prompt}] + messages
     model_name = config.get('configurable', {}).get("model_name", "anthropic")
     model = _get_model(model_name)
     response = model.invoke(messages)
