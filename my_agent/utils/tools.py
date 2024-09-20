@@ -1,4 +1,3 @@
-from langchain.tools import OpenAITool
+from langchain_community.tools.tavily_search import TavilySearchResults
 
-# Example: use OpenAI for text generation
-tools = [OpenAITool()]
+tools = [TavilySearchResults(max_results=1)]
