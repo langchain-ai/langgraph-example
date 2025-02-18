@@ -7,7 +7,7 @@ from my_agent.utils.state import AgentState
 
 # Define the config
 class GraphConfig(TypedDict):
-    model_name: Literal["anthropic", "openai"]
+    model_name: Literal[ "openai"]
 
 
 # Define a new graph
@@ -50,3 +50,24 @@ workflow.add_edge("action", "agent")
 # This compiles it into a LangChain Runnable,
 # meaning you can use it as you would any other runnable
 graph = workflow.compile()
+
+# def stream_graph_updates(user_input: str):
+#     for event in graph.stream({"messages": [("user", user_input)]}):
+#         for value in event.values():
+#             print(value)
+#             print("Assistant:", value["messages"][-1].content)
+
+# while True:
+#     try:
+#         user_input = input("User: ")
+#         if user_input.lower() in ["quit", "exit", "q"]:
+#             print("Goodbye!")
+#             break
+
+#         stream_graph_updates(user_input)
+#     except:
+#         # fallback if input() is not available
+#         user_input = "What do you know about LangGraph?"
+#         print("User: " + user_input)
+#         stream_graph_updates(user_input)
+#         break
