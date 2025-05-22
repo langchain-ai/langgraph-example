@@ -1,6 +1,7 @@
 from functools import lru_cache
-from langchain_anthropic import ChatAnthropic
+#from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from my_agent.utils.tools import tools
 from langgraph.prebuilt import ToolNode
 
@@ -9,8 +10,10 @@ from langgraph.prebuilt import ToolNode
 def _get_model(model_name: str):
     if model_name == "openai":
         model = ChatOpenAI(temperature=0, model_name="gpt-4o")
-    elif model_name == "anthropic":
-        model =  ChatAnthropic(temperature=0, model_name="claude-3-sonnet-20240229")
+    elif model_name == "google":
+        model = ChatGoogleGenerativeAI(temperature=0,model="gemini-2.0-flash")
+    # elif model_name == "anthropic":
+    #     model =  ChatAnthropic(temperature=0, model_name="claude-3-sonnet-20240229")
     else:
         raise ValueError(f"Unsupported model type: {model_name}")
 
@@ -35,7 +38,7 @@ system_prompt = """Be a helpful assistant"""
 def call_model(state, config):
     messages = state["messages"]
     messages = [{"role": "system", "content": system_prompt}] + messages
-    model_name = config.get('configurable', {}).get("model_name", "anthropic")
+    model_name = config.get('configurable', {}).get("model_name", "openai")
     model = _get_model(model_name)
     response = model.invoke(messages)
     # We return a list, because this will get added to the existing list
